@@ -1,14 +1,15 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#BCEFBE"
+    android:background="@drawable/card_gradient"
     android:orientation="vertical"
+
     android:padding="16dp">
 
     <ImageView
         android:id="@+id/forecastWeatherIconImageView"
-        android:layout_width="53dp"
-        android:layout_height="53dp"
+        android:layout_width="51dp"
+        android:layout_height="42dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="8dp"
         android:src="@drawable/ic_cloudy" />
@@ -18,7 +19,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:text="Date"
         android:textColor="#000000"
         android:textSize="14sp" />
 
@@ -32,7 +32,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="8dp"
-        android:text="Temperature: 25°C"
         android:textColor="#000000"
         android:textSize="14sp" />
 
@@ -43,7 +42,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="8dp"
-        android:text="Novosibirsk"
         android:textColor="#000000"
         android:textSize="14sp" />
 </LinearLayout>

@@ -1,6 +1,5 @@
 package com.example.practicpogoda;
 
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
@@ -9,13 +8,16 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.location.Address;
 import android.location.Geocoder;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -28,31 +30,17 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.Manifest;
-import android.content.pm.PackageManager;
-import android.location.Address;
-import android.location.Geocoder;
-import android.location.Location;
-import android.os.Bundle;
-import android.util.Log;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 import com.squareup.picasso.Picasso;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -68,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String BASE_URL = "https://api.weatherapi.com/v1/";
     private static final String API_KEY = "e238b3fbb5734f208e7151055240302";
-    private static String CITY_NAME = "Novosibirsk";
+    private String CITY_NAME = ""; // Убрано из начала кода
     private RecyclerView recyclerView7Days;
     private RecyclerView recyclerView14Days;
     private ForecastAdapter forecastAdapter7Days;
@@ -126,6 +114,13 @@ public class MainActivity extends AppCompatActivity {
         RecyclerView recyclerView14Days = findViewById(R.id.forecastRecyclerView14Days);
         LinearLayoutManager layoutManager14Days = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         recyclerView14Days.setLayoutManager(layoutManager14Days);
+        ImageButton newsButton = findViewById(R.id.newsbutton);
+        newsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openWeatherNews();
+            }
+        });
         ImageButton weatherButton = findViewById(R.id.weatherButton);
         weatherButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -133,14 +128,8 @@ public class MainActivity extends AppCompatActivity {
                 openWeatherMap();
             }
         });
-        if (!isLocationFetched && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // Запрашиваем разрешение, если оно не предоставлено и местоположение еще не получено
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
-        } else {
-            // Разрешение уже предоставлено или местоположение уже получено
-            fetchDefaultCityByLocation();
-            isLocationFetched = true;
-        }
+
+        fetchDefaultCityByLocation(); // Получаем местоположение
 
         cityNameEditText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -153,7 +142,6 @@ public class MainActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {
                 String newCityName = s.toString().trim();
                 if (!newCityName.isEmpty()) {
-                    fetchDefaultCityByLocation();
                     CITY_NAME = newCityName;
                     fetchWeatherData();
                     fetchWeatherForecast7Days(CITY_NAME);
@@ -166,9 +154,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        fetchWeatherData();
-        fetchWeatherForecast7Days(CITY_NAME);
-        fetchWeatherForecast14Days(CITY_NAME);
+        // Убираем fetchWeatherData() и fetchWeatherForecast вызовы из этого места
     }
 
     private void fetchDefaultCityByLocation() {
@@ -195,6 +181,8 @@ public class MainActivity extends AppCompatActivity {
                                         Log.d("Location", "City Name: " + CITY_NAME); // Отладочный вывод
                                         updateCityNameEditText(CITY_NAME); // Устанавливаем название города в EditText
                                         fetchWeatherData(); // Запрашиваем данные о погоде для полученного города
+                                        fetchWeatherForecast7Days(CITY_NAME);
+                                        fetchWeatherForecast14Days(CITY_NAME);
                                     } else {
                                         Log.e("Location", "No address found for the location");
                                         // Если не удалось определить город, вы можете установить другое значение по умолчанию или вывести сообщение об ошибке
@@ -210,16 +198,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-
-
-
-
     private void updateCityNameEditText(String cityName) {
         cityNameEditText.setText(cityName);
     }
+
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
             // Проверяем, было ли предоставлено разрешение
@@ -232,6 +216,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
 
     private void fetchWeatherData() {
         Call<WeatherResponse> call = service.getWeather(API_KEY, CITY_NAME);
@@ -342,6 +327,12 @@ public class MainActivity extends AppCompatActivity {
 
     private void openWeatherMap() {
         String url = "https://yandex.ru/pogoda/maps/nowcast";
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse(url));
+        startActivity(intent);
+    }
+    private void openWeatherNews() {
+        String url = "https://meteoinfo.ru/novosti";
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setData(Uri.parse(url));
         startActivity(intent);

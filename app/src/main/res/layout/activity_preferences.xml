@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#B2F0F8"
+    android:background="@drawable/background_gradient"
     android:orientation="vertical">
 
     <!-- Заголовок настроек -->
@@ -12,6 +12,7 @@
         android:padding="16dp"
         android:text="Настройки приложения"
         android:textAlignment="center"
+        android:textColor="#000000"
         android:textSize="20sp"
         android:textStyle="bold" />
 
@@ -49,6 +50,7 @@
             android:text="Русский язык"
             android:textColor="#000000"
             android:textColorHighlight="#B60D0D"
+            android:textColorHint="#000000"
             android:textColorLink="#F44336" />
 
         <RadioButton
@@ -94,13 +96,6 @@
     </RadioGroup>
 
     <!-- Переключатель для определения геолокации -->
-    <CheckBox
-        android:id="@+id/locationSwitch"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:text="Определение местоположения"
-        android:textColor="#000000" />
 
     <!-- Выбор темы -->
     <TextView
@@ -142,6 +137,15 @@
         android:layout_margin="16dp"
         android:backgroundTint="#CFF2A6"
         android:text="Сохранить настройки"
+        android:textColor="#000000" />
+
+    <Button
+        android:id="@+id/dev"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:backgroundTint="#CFF2A6"
+        android:text="О разработчике"
         android:textColor="#000000" />
 
 </LinearLayout>

@@ -65,7 +65,7 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
             @Override
             public void run() {
                 fetchWeatherData(context);
-                handler.postDelayed(this, 10 * 1000); // Запускаем обновление погоды через 10 секунд
+                handler.postDelayed(this, 1 * 1000); // Запускаем обновление погоды через 10 секунд
             }
         }, 10 * 1000);
     }
