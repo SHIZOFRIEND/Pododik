@@ -1,0 +1,49 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#BCEFBE"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <ImageView
+        android:id="@+id/forecastWeatherIconImageView"
+        android:layout_width="53dp"
+        android:layout_height="53dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="8dp"
+        android:src="@drawable/ic_cloudy" />
+
+    <TextView
+        android:id="@+id/forecastDateTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="Date"
+        android:textColor="#000000"
+        android:textSize="14sp" />
+
+    <!-- Изображение погоды -->
+
+
+    <!-- Температура -->
+    <TextView
+        android:id="@+id/forecastTemperatureTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="8dp"
+        android:text="Temperature: 25°C"
+        android:textColor="#000000"
+        android:textSize="14sp" />
+
+    <!-- Город -->
+    <TextView
+        android:id="@+id/forecastCityTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="8dp"
+        android:text="Novosibirsk"
+        android:textColor="#000000"
+        android:textSize="14sp" />
+</LinearLayout>

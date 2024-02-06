@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#B2F0F8"
+    android:orientation="vertical">
+
+    <!-- Заголовок настроек -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:text="Настройки приложения"
+        android:textAlignment="center"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <!-- Переключатель для уведомлений -->
+    <CheckBox
+        android:id="@+id/notificationSwitch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:text="Уведомления"
+        android:textColor="#000000"
+        android:textColorHint="#000000" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:text="Язык приложения"
+        android:textColor="#000000"
+        android:textSize="16sp" />
+
+    <RadioGroup
+        android:id="@+id/unitsRadioGrouplang"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp">
+
+        <RadioButton
+            android:id="@+id/ruRadioButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="Русский язык"
+            android:textColor="#000000"
+            android:textColorHighlight="#B60D0D"
+            android:textColorLink="#F44336" />
+
+        <RadioButton
+            android:id="@+id/engRadioButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Английский язык"
+            android:textColor="#000000" />
+    </RadioGroup>
+    <!-- Выбор единиц измерения -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:text="Единицы измерения"
+        android:textColor="#000000"
+        android:textSize="16sp" />
+
+    <RadioGroup
+        android:id="@+id/unitsRadioGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp">
+
+        <RadioButton
+            android:id="@+id/celsiusRadioButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="Градусы Цельсия"
+            android:textColor="#000000"
+            android:textColorHighlight="#B60D0D"
+            android:textColorLink="#F44336" />
+
+        <RadioButton
+            android:id="@+id/fahrenheitRadioButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Градусы Фаренгейта"
+            android:textColor="#000000" />
+    </RadioGroup>
+
+    <!-- Переключатель для определения геолокации -->
+    <CheckBox
+        android:id="@+id/locationSwitch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:text="Определение местоположения"
+        android:textColor="#000000" />
+
+    <!-- Выбор темы -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:text="Выбор темы"
+        android:textColor="#000000"
+        android:textSize="16sp" />
+
+    <RadioGroup
+        android:id="@+id/themeRadioGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp">
+
+        <RadioButton
+            android:id="@+id/lightThemeRadioButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Светлая тема"
+            android:textColor="#000000" />
+
+        <RadioButton
+            android:id="@+id/darkThemeRadioButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Темная тема"
+            android:textColor="#000000" />
+    </RadioGroup>
+
+    <!-- Кнопка "Сохранить настройки" -->
+    <Button
+        android:id="@+id/saveSettingsButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:backgroundTint="#CFF2A6"
+        android:text="Сохранить настройки"
+        android:textColor="#000000" />
+
+</LinearLayout>

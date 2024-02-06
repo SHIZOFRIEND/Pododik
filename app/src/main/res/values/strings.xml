@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">PracticPogoda</string>
+    <string name="temperature">Temperature: %.1f°C</string>
+    <string name="weather_condition">Weather Condition: %s</string>
+    <string name="humidity">Humidity: %d%%</string>
+    <string name="wind_speed">Wind Speed: %.1f km/h</string>
+    <string name="channel_name">Weather Channel</string>
+    <string name="channel_description">Weather notifications channel</string>
+
+</resources>
