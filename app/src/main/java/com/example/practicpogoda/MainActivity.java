@@ -11,6 +11,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.Manifest;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -51,6 +53,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_NOTIFICATION_PERMISSION = 123;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1001;
+    public static final String ACTION_UPDATE_WIDGET = "com.example.practicpogoda.ACTION_UPDATE_WIDGET";
+
 
     private static final String CHANNEL_ID = "weather_notifications";
 
@@ -144,6 +148,7 @@ public class MainActivity extends AppCompatActivity {
                 if (!newCityName.isEmpty()) {
                     CITY_NAME = newCityName;
                     fetchWeatherData();
+
                     fetchWeatherForecast7Days(CITY_NAME);
                     fetchWeatherForecast14Days(CITY_NAME);
                     SharedPreferences preferences = getSharedPreferences("MyPreferences", Context.MODE_PRIVATE);
@@ -217,7 +222,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Intent intent = new Intent("com.example.practicpogoda.APP_CLOSED");
+        sendBroadcast(intent);
+    }
     private void fetchWeatherData() {
         Call<WeatherResponse> call = service.getWeather(API_KEY, CITY_NAME);
         call.enqueue(new Callback<WeatherResponse>() {
@@ -226,6 +236,7 @@ public class MainActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     WeatherResponse weatherResponse = response.body();
                     updateUI(weatherResponse);
+                    updateWidgetCity(CITY_NAME);
                     showWeatherNotification(weatherResponse);
                 } else {
                     Log.e("WeatherAPI", "Failed to get weather data");
@@ -268,6 +279,18 @@ public class MainActivity extends AppCompatActivity {
         } catch (SecurityException e) {
             e.printStackTrace();
         }
+    }
+    private void updateWidgetCity(String cityName) {
+        // Обновляем город в SharedPreferences
+        SharedPreferences preferences = getSharedPreferences("MyPreferences", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("cityName", cityName);
+        editor.apply();
+
+        // Отправляем широковещательное сообщение для обновления виджета
+        Intent updateWidgetIntent = new Intent(ACTION_UPDATE_WIDGET);
+        updateWidgetIntent.putExtra("cityName", cityName);
+        sendBroadcast(updateWidgetIntent);
     }
 
     @Override
@@ -348,5 +371,6 @@ public class MainActivity extends AppCompatActivity {
         Log.d("WeatherIcon", "Icon URL: " + currentWeather.getWeatherCondition().getIconUrl()); // Проверяем URL для загрузки иконки
 
         Picasso.get().load("https:" + currentWeather.getWeatherCondition().getIconUrl()).into(weatherIconImageView);
+
     }
 }

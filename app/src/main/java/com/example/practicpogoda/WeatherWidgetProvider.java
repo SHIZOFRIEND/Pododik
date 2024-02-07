@@ -29,7 +29,23 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
     @Override
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
-
+        if (intent.getAction().equals("com.example.practicpogoda.APP_CLOSED")) {
+            // Приложение закрыто, отключаем и снова включаем виджет
+            disableAndEnableWidget(context);
+        }
+        if (intent.getAction().equals(MainActivity.ACTION_UPDATE_WIDGET)) {
+            String cityName = intent.getStringExtra("cityName");
+            if (cityName != null) {
+                updateWidgetCity(context, cityName); // Обновляем виджет с новым городом
+            }
+        }
+        if (intent.getAction().equals("com.example.practicpogoda.APP_CLOSED")) {
+            // Приложение закрыто, принудительно обновляем виджет
+            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+            ComponentName thisWidget = new ComponentName(context, WeatherWidgetProvider.class);
+            int[] appWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget);
+            onUpdate(context, appWidgetManager, appWidgetIds);
+        }
         // Обновляем виджет, если получено широковещательное сообщение о запуске приложения
         if (intent.getAction().equals("com.example.practicpogoda.APP_STARTED")) {
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
@@ -38,11 +54,25 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
             onUpdate(context, appWidgetManager, appWidgetIds);
         }
     }
+    public static void updateWidgetCity(Context context, String cityName) {
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
+
+        // Обновляем текстовое поле с названием города
+        views.setTextViewText(R.id.forecastCityTextView, cityName);
+
+        // Обновляем виджет
+        ComponentName thisWidget = new ComponentName(context, WeatherWidgetProvider.class);
+        appWidgetManager.updateAppWidget(thisWidget, views);
+
+    }
+
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         fetchWeatherData(context);
         setAlarm(context);
         this.context = context;
+
         Intent intent = new Intent(context, WeatherWidgetProvider.class);
         intent.setAction("com.example.practicpogoda.ACTION_WIDGET_CLICKED");
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
@@ -61,14 +91,16 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
         // Обновляем виджет
         ComponentName thisWidget = new ComponentName(context, WeatherWidgetProvider.class);
         appWidgetManager.updateAppWidget(thisWidget, views);
+        handler.postDelayed(updateWeatherRunnable, 10 * 1000);
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 fetchWeatherData(context);
-                handler.postDelayed(this, 1 * 1000); // Запускаем обновление погоды через 10 секунд
+                handler.postDelayed(this, 10 * 1000); // Запускаем обновление погоды через 10 секунд
             }
         }, 10 * 1000);
     }
+
     private Runnable updateWeatherRunnable = new Runnable() {
         @Override
         public void run() {
@@ -112,7 +144,23 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
             }
         });
     }
+    private void disableAndEnableWidget(Context context) {
+        // Отключаем виджет
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+        ComponentName thisWidget = new ComponentName(context, WeatherWidgetProvider.class);
+        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget);
+        appWidgetManager.updateAppWidget(thisWidget, new RemoteViews(context.getPackageName(), R.layout.widget_layout));
 
+        // Подождите некоторое время перед включением виджета
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        // Снова включаем виджет
+        appWidgetManager.updateAppWidget(thisWidget, new RemoteViews(context.getPackageName(), R.layout.widget_layout));
+    }
     private void updateAppWidget(Context context, WeatherResponse weatherResponse) {
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_layout);

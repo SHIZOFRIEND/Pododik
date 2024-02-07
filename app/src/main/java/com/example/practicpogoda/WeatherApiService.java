@@ -15,6 +15,9 @@ public interface WeatherApiService {
             @Query("q") String cityName,
             @Query("aqi") String aqi // Управляет возвращаемыми данными об качестве воздуха (необязательно)
     );
+    @GET("weth")
+    Call<WeatherResponse> getWeather(@Query("api_key") String apiKey, @Query("lat") double latitude, @Query("lon") double longitude);
+
     @GET("forecast.json")
     Call<WeatherForecastResponse> getWeatherForecast7Days(@Query("key") String apiKey, @Query("q") String cityName, @Query("days") int days);
 
