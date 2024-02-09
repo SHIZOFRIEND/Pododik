@@ -66,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView14Days;
     private ForecastAdapter forecastAdapter7Days;
     private ForecastAdapter forecastAdapter14Days;
+    private AppSettings appSettings;
 
     private TextView temperatureTextView;
     private TextView weatherConditionTextView;
@@ -81,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        appSettings = new AppSettings(this);
 
         retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
@@ -264,10 +266,18 @@ public class MainActivity extends AppCompatActivity {
         });
     }
     private void showWeatherNotification(WeatherResponse weatherResponse) {
-        // Получение данных о погоде для отображения в уведомлении
         String temperature = String.valueOf(weatherResponse.getCurrentWeather().getTemperatureCelsius());
         String condition = weatherResponse.getCurrentWeather().getWeatherCondition().getConditionText();
 
+        // Проверяем состояние чекбокса в настройках
+        boolean isNotificationEnabled = appSettings.isNotificationEnabled();
+
+        if (!isNotificationEnabled) {
+            // Если уведомления отключены в настройках, скрываем все уведомления
+            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+            notificationManager.cancelAll();
+            return;
+        }
         // Создание канала уведомлений (требуется только один раз)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence name = getString(R.string.channel_name);
