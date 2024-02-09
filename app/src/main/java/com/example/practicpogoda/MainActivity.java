@@ -55,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1001;
     public static final String ACTION_UPDATE_WIDGET = "com.example.practicpogoda.ACTION_UPDATE_WIDGET";
 
+    private static final String PREF_LAST_CITY = "last_city";
 
     private static final String CHANNEL_ID = "weather_notifications";
 
@@ -115,6 +116,15 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        SharedPreferences preferences = getSharedPreferences("MyPreferences", Context.MODE_PRIVATE);
+        String lastCity = preferences.getString(PREF_LAST_CITY, "");
+        if (!lastCity.isEmpty()) {
+            CITY_NAME = lastCity;
+            fetchWeatherData();
+            fetchWeatherForecast7Days(CITY_NAME);
+            fetchWeatherForecast14Days(CITY_NAME);
+            cityNameEditText.setText(CITY_NAME);
+        }
         RecyclerView recyclerView14Days = findViewById(R.id.forecastRecyclerView14Days);
         LinearLayoutManager layoutManager14Days = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         recyclerView14Days.setLayoutManager(layoutManager14Days);
@@ -238,6 +248,10 @@ public class MainActivity extends AppCompatActivity {
                     updateUI(weatherResponse);
                     updateWidgetCity(CITY_NAME);
                     showWeatherNotification(weatherResponse);
+                    SharedPreferences preferences = getSharedPreferences("MyPreferences", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = preferences.edit();
+                    editor.putString(PREF_LAST_CITY, CITY_NAME);
+                    editor.apply();
                 } else {
                     Log.e("WeatherAPI", "Failed to get weather data");
                 }
