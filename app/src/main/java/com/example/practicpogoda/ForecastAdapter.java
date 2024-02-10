@@ -1,6 +1,8 @@
 package com.example.practicpogoda;
 
 
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,9 +32,20 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
     public void onBindViewHolder(@NonNull ForecastViewHolder holder, int position) {
         WeatherForecastResponse.ForecastDay forecastDay = forecastDays.get(position);
         holder.forecastDateTextView.setText(forecastDay.getDate());
-        holder.forecastTemperatureTextView.setText(String.valueOf(forecastDay.getDay().getMaxTempCelsius()));
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(holder.itemView.getContext());
+        String temperatureUnit = sharedPreferences.getString("temperature_unit", "Celsius");
 
-        // Загружаем и отображаем иконку погоды с помощью Picasso
+        double maxTemperature;
+        if (temperatureUnit.equals("Celsius")) {
+            maxTemperature = forecastDay.getDay().getMaxTempCelsius();
+            holder.forecastTemperatureTextView.setText(String.valueOf(maxTemperature) + "°C");
+        } else {
+            maxTemperature = forecastDay.getDay().getMaxTempFahrenheit();
+            holder.forecastTemperatureTextView.setText(String.valueOf(maxTemperature) + "°F");
+        }
+
+
+
         Picasso.get().load("https:" + forecastDay.getDay().getWeatherCondition().getIconUrl()).into(holder.forecastWeatherIconImageView);
     }
     public void updateForecastData(List<WeatherForecastResponse.ForecastDay> forecastDays) {

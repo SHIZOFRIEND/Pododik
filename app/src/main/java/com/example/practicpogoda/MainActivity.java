@@ -23,6 +23,7 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -61,12 +62,13 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String BASE_URL = "https://api.weatherapi.com/v1/";
     private static final String API_KEY = "020181d1b1c44cca88051726241002";
-    private String CITY_NAME = ""; // Убрано из начала кода
+    private String CITY_NAME = "";
     private RecyclerView recyclerView7Days;
     private RecyclerView recyclerView14Days;
     private ForecastAdapter forecastAdapter7Days;
     private ForecastAdapter forecastAdapter14Days;
     private AppSettings appSettings;
+    private SharedPreferences sharedPreferences;
 
     private TextView temperatureTextView;
     private TextView weatherConditionTextView;
@@ -91,8 +93,8 @@ public class MainActivity extends AppCompatActivity {
 
         service = retrofit.create(WeatherApiService.class);
 
-        cityNameEditText = findViewById(R.id.cityNameEditText); // Убедитесь, что это единственное объявление
-
+        cityNameEditText = findViewById(R.id.cityNameEditText);
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         temperatureTextView = findViewById(R.id.temperatureTextView);
         weatherConditionTextView = findViewById(R.id.weatherConditionTextView);
         humidityTextView = findViewById(R.id.humidityTextView);
@@ -103,7 +105,8 @@ public class MainActivity extends AppCompatActivity {
 
         forecastAdapter7Days = new ForecastAdapter(new ArrayList<>());
         recyclerView7Days.setAdapter(forecastAdapter7Days);
-
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String temperatureUnit = sharedPreferences.getString("temperature_unit", "Celsius");
         forecastAdapter14Days = new ForecastAdapter(new ArrayList<>());
         recyclerView14Days.setAdapter(forecastAdapter14Days);
         RecyclerView recyclerView7Days = findViewById(R.id.forecastRecyclerView7Days);
@@ -145,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        fetchDefaultCityByLocation(); // Получаем местоположение
+        fetchDefaultCityByLocation();
 
         cityNameEditText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -165,21 +168,21 @@ public class MainActivity extends AppCompatActivity {
                     fetchWeatherForecast14Days(CITY_NAME);
                     SharedPreferences preferences = getSharedPreferences("MyPreferences", Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = preferences.edit();
-                    editor.putString("cityName", newCityName); // Используйте newCityName
+                    editor.putString("cityName", newCityName);
                     editor.apply();
                 }
             }
         });
 
-        // Убираем fetchWeatherData() и fetchWeatherForecast вызовы из этого места
+
     }
 
     private void fetchDefaultCityByLocation() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // Разрешение не предоставлено, запрашиваем его у пользователя
+
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
         } else {
-            // Разрешение уже предоставлено, выполняем операцию получения местоположения
+
             FusedLocationProviderClient fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
             fusedLocationClient.getLastLocation()
                     .addOnSuccessListener(this, new OnSuccessListener<Location>() {
@@ -189,20 +192,20 @@ public class MainActivity extends AppCompatActivity {
                                 double latitude = location.getLatitude();
                                 double longitude = location.getLongitude();
 
-                                // Используем Geocoder для получения города по координатам
+
                                 Geocoder geocoder = new Geocoder(MainActivity.this, Locale.getDefault());
                                 try {
                                     List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
                                     if (!addresses.isEmpty()) {
                                         CITY_NAME = addresses.get(0).getLocality();
-                                        Log.d("Location", "City Name: " + CITY_NAME); // Отладочный вывод
-                                        updateCityNameEditText(CITY_NAME); // Устанавливаем название города в EditText
-                                        fetchWeatherData(); // Запрашиваем данные о погоде для полученного города
+                                        Log.d("Location", "City Name: " + CITY_NAME);
+                                        updateCityNameEditText(CITY_NAME);
+                                        fetchWeatherData();
                                         fetchWeatherForecast7Days(CITY_NAME);
                                         fetchWeatherForecast14Days(CITY_NAME);
                                     } else {
                                         Log.e("Location", "No address found for the location");
-                                        // Если не удалось определить город, вы можете установить другое значение по умолчанию или вывести сообщение об ошибке
+
                                     }
                                 } catch (IOException e) {
                                     Log.e("Location", "Error getting city name from location", e);
@@ -223,12 +226,12 @@ public class MainActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
-            // Проверяем, было ли предоставлено разрешение
+
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Разрешение было предоставлено, выполняем операцию получения местоположения
+
                 fetchDefaultCityByLocation();
             } else {
-                // Разрешение не было предоставлено, выводим сообщение об ошибке или выполняем другие действия
+
                 Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
             }
         }
@@ -247,7 +250,7 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(Call<WeatherResponse> call, Response<WeatherResponse> response) {
                 if (response.isSuccessful()) {
                     WeatherResponse weatherResponse = response.body();
-                    updateUI(weatherResponse);
+                    updateUI(weatherResponse,sharedPreferences);
                     updateWidgetCity(CITY_NAME);
                     showWeatherNotification(weatherResponse);
                     SharedPreferences preferences = getSharedPreferences("MyPreferences", Context.MODE_PRIVATE);
@@ -269,16 +272,16 @@ public class MainActivity extends AppCompatActivity {
         String temperature = String.valueOf(weatherResponse.getCurrentWeather().getTemperatureCelsius());
         String condition = weatherResponse.getCurrentWeather().getWeatherCondition().getConditionText();
 
-        // Проверяем состояние чекбокса в настройках
+
         boolean isNotificationEnabled = appSettings.isNotificationEnabled();
 
         if (!isNotificationEnabled) {
-            // Если уведомления отключены в настройках, скрываем все уведомления
+
             NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
             notificationManager.cancelAll();
             return;
         }
-        // Создание канала уведомлений (требуется только один раз)
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence name = getString(R.string.channel_name);
             String description = getString(R.string.channel_description);
@@ -290,7 +293,7 @@ public class MainActivity extends AppCompatActivity {
             notificationManager.createNotificationChannel(channel);
         }
 
-        // Создание уведомления с данными о погоде
+
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.weather_icon)
                 .setContentTitle("Current Weather")
@@ -311,7 +314,6 @@ public class MainActivity extends AppCompatActivity {
         editor.putString("cityName", cityName);
         editor.apply();
 
-        // Отправляем широковещательное сообщение для обновления виджета
         Intent updateWidgetIntent = new Intent(ACTION_UPDATE_WIDGET);
         updateWidgetIntent.putExtra("cityName", cityName);
         sendBroadcast(updateWidgetIntent);
@@ -332,9 +334,9 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(Call<WeatherForecastResponse> call, Response<WeatherForecastResponse> response) {
                 if (response.isSuccessful()) {
                     WeatherForecastResponse weatherResponse = response.body();
-                    // Получите прогноз погоды на 7 дней из weatherResponse
+
                     List<WeatherForecastResponse.ForecastDay> forecastDays = weatherResponse.getForecast().getForecastDays();
-                    // Обновите адаптер RecyclerView на 7 дней с использованием полученных данных
+
                     forecastAdapter7Days.updateForecastData(forecastDays);
                 } else {
                     Log.e("WeatherAPI", "Failed to get weather forecast for 7 days");
@@ -355,9 +357,9 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(Call<WeatherForecastResponse> call, Response<WeatherForecastResponse> response) {
                 if (response.isSuccessful()) {
                     WeatherForecastResponse weatherResponse = response.body();
-                    // Получите прогноз погоды на 14 дней из weatherResponse
+
                     List<WeatherForecastResponse.ForecastDay> forecastDays = weatherResponse.getForecast().getForecastDays();
-                    // Обновите адаптер RecyclerView на 14 дней с использованием полученных данных
+
                     forecastAdapter14Days.updateForecastData(forecastDays);
                 } else {
                     Log.e("WeatherAPI", "Failed to get weather forecast for 14 days");
@@ -385,14 +387,39 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void updateUI(WeatherResponse weatherResponse) {
+    private void updateUI(WeatherResponse weatherResponse,SharedPreferences sharedPreferences) {
         CurrentWeather currentWeather = weatherResponse.getCurrentWeather();
-        temperatureTextView.setText(getString(R.string.temperature, currentWeather.getTemperatureCelsius()));
+        String temperatureUnit = sharedPreferences.getString("temperature_unit", "Celsius");
+        String windSpeedUnit = sharedPreferences.getString("wind_speed_unit", "kmh");
+
+        double temperatureValue;
+        String temperatureStringFormat;
+        if (temperatureUnit.equals("Celsius")) {
+            temperatureValue = currentWeather.getTemperatureCelsius();
+            temperatureStringFormat = getString(R.string.temperature);
+        } else {
+            temperatureValue = currentWeather.getTemperatureFahrenheit();
+            temperatureStringFormat = getString(R.string.temperature_fahrenheit);
+        }
+        double windSpeedValue;
+        String windSpeedStringFormat;
+        if (windSpeedUnit.equals("kmh")) {
+            windSpeedValue = currentWeather.getWindSpeedKph();
+            windSpeedStringFormat = getString(R.string.wind_speed_kmh);
+        } else {
+            windSpeedValue = currentWeather.getWindSpeedMph();
+            windSpeedStringFormat = getString(R.string.wind_speed_mph);
+        }
+
+        windSpeedTextView.setText(String.format(Locale.getDefault(), windSpeedStringFormat, windSpeedValue));
+        temperatureTextView.setText(String.format(Locale.getDefault(), temperatureStringFormat, temperatureValue));
+
         weatherConditionTextView.setText(getString(R.string.weather_condition, currentWeather.getWeatherCondition().getConditionText()));
         humidityTextView.setText(getString(R.string.humidity, currentWeather.getHumidity()));
-        windSpeedTextView.setText(getString(R.string.wind_speed, currentWeather.getWindSpeedKph()));
 
-        Log.d("WeatherIcon", "Icon URL: " + currentWeather.getWeatherCondition().getIconUrl()); // Проверяем URL для загрузки иконки
+
+
+        Log.d("WeatherIcon", "Icon URL: " + currentWeather.getWeatherCondition().getIconUrl());
 
         Picasso.get().load("https:" + currentWeather.getWeatherCondition().getIconUrl()).into(weatherIconImageView);
 

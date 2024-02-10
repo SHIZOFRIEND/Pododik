@@ -39,6 +39,11 @@ public class WeatherForecastResponse {
     public static class Day {
         @SerializedName("maxtemp_c")
         private double maxTempCelsius;
+        @SerializedName("maxtemp_f")
+        private double maxTempFahrenheit;
+
+        @SerializedName("mintemp_f")
+        private double minTempFahrenheit;
 
         @SerializedName("mintemp_c")
         private double minTempCelsius;
@@ -48,6 +53,13 @@ public class WeatherForecastResponse {
 
         public double getMaxTempCelsius() {
             return maxTempCelsius;
+        }
+        public double getMaxTempFahrenheit() {
+            return maxTempFahrenheit;
+        }
+
+        public double getMinTempFahrenheit() {
+            return minTempFahrenheit;
         }
 
         public double getMinTempCelsius() {

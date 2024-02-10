@@ -1,6 +1,12 @@
 <resources>
     <string name="app_name">PracticPogoda</string>
     <string name="temperature">Temperature: %.1f°C</string>
+    <string name="temperature_fahrenheit">Temperature: %.1f°F</string>
+    <string name="temperature_celsius">Celsius</string>
+    <string name="wind_speed_kmh">Wind Speed: %.1f km/h</string>
+    <string name="wind_speed_mph">Wind Speed: %.1f mph</string>
+
+
     <string name="weather_condition">Weather Condition: %s</string>
     <string name="humidity">Humidity: %d%%</string>
     <string name="wind_speed">Wind Speed: %.1f km/h</string>

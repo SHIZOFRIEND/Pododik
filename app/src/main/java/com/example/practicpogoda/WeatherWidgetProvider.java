@@ -35,23 +35,23 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
         if (intent.getAction().equals("com.example.practicpogoda.APP_CLOSED")) {
-            // Приложение закрыто, отключаем и снова включаем виджет
+
             disableAndEnableWidget(context);
         }
         if (intent.getAction().equals(MainActivity.ACTION_UPDATE_WIDGET)) {
             String cityName = intent.getStringExtra("cityName");
             if (cityName != null) {
-                updateWidgetCity(context, cityName); // Обновляем виджет с новым городом
+                updateWidgetCity(context, cityName);
             }
         }
         if (intent.getAction().equals("com.example.practicpogoda.APP_CLOSED")) {
-            // Приложение закрыто, принудительно обновляем виджет
+
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
             ComponentName thisWidget = new ComponentName(context, WeatherWidgetProvider.class);
             int[] appWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget);
             onUpdate(context, appWidgetManager, appWidgetIds);
         }
-        // Обновляем виджет, если получено широковещательное сообщение о запуске приложения
+
         if (intent.getAction().equals("com.example.practicpogoda.APP_STARTED")) {
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
             ComponentName thisWidget = new ComponentName(context, WeatherWidgetProvider.class);
@@ -63,10 +63,10 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
 
-        // Обновляем текстовое поле с названием города
+
         views.setTextViewText(R.id.forecastCityTextView, cityName);
 
-        // Обновляем виджет
+
         ComponentName thisWidget = new ComponentName(context, WeatherWidgetProvider.class);
         appWidgetManager.updateAppWidget(thisWidget, views);
 
@@ -88,11 +88,11 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
 
             @Override
             public void onPrepareLoad(Drawable placeHolderDrawable) {
-                // Можно обработать заглушку, если необходимо
+
             }
         };
 
-        // Загрузка изображения с помощью Picasso
+
         Picasso.get().load(iconUrl).into(target);
     }
 
@@ -106,9 +106,9 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
         intent.setAction("com.example.practicpogoda.ACTION_WIDGET_CLICKED");
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        alarmManager.setRepeating(AlarmManager.RTC, System.currentTimeMillis(), 10 * 1000, pendingIntent); // Запуск обновления каждые 10 секунд
+        alarmManager.setRepeating(AlarmManager.RTC, System.currentTimeMillis(), 10 * 1000, pendingIntent);
 
-        // Устанавливаем обработчик нажатия на виджет
+
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
         views.setOnClickPendingIntent(R.id.forecastTemperatureTextView, pendingIntent);
 
@@ -117,7 +117,6 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
         views.setOnClickPendingIntent(R.id.forecastWeatherIconImageView, pendingIntent);
 
 
-        // Обновляем виджет
         ComponentName thisWidget = new ComponentName(context, WeatherWidgetProvider.class);
         appWidgetManager.updateAppWidget(thisWidget, views);
         handler.postDelayed(updateWeatherRunnable, 10 * 1000);
@@ -125,7 +124,7 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
             @Override
             public void run() {
                 fetchWeatherData(context);
-                handler.postDelayed(this, 10 * 1000); // Запускаем обновление погоды через 10 секунд
+                handler.postDelayed(this, 10 * 1000);
             }
         }, 10 * 1000);
     }
@@ -133,14 +132,14 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
     private Runnable updateWeatherRunnable = new Runnable() {
         @Override
         public void run() {
-            fetchWeatherData(context); // Вызываем метод для обновления погоды
-            handler.postDelayed(this, 10 * 1000); // Планируем повторное выполнение через 10 секунд
+            fetchWeatherData(context);
+            handler.postDelayed(this, 10 * 1000);
         }
     };
 
     private void fetchWeatherData(Context context) {
         SharedPreferences preferences = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE);
-        String cityName = preferences.getString("cityName", "Novosibirsk"); // Получаем выбранный город из SharedPreferences
+        String cityName = preferences.getString("cityName", "Novosibirsk");
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
@@ -157,7 +156,7 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
                     WeatherResponse weatherResponse = response.body();
                     CurrentWeather currentWeather = weatherResponse.getCurrentWeather();
                     if (currentWeather != null) {
-                        currentWeather.setCityName(cityName); // Устанавливаем значение cityName в объекте CurrentWeather
+                        currentWeather.setCityName(cityName);
 
                         updateAppWidget(context, weatherResponse);
                     } else {
@@ -175,20 +174,20 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
         });
     }
     private void disableAndEnableWidget(Context context) {
-        // Отключаем виджет
+
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
         ComponentName thisWidget = new ComponentName(context, WeatherWidgetProvider.class);
         int[] appWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget);
         appWidgetManager.updateAppWidget(thisWidget, new RemoteViews(context.getPackageName(), R.layout.widget_layout));
 
-        // Подождите некоторое время перед включением виджета
+
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
-        // Снова включаем виджет
+
         appWidgetManager.updateAppWidget(thisWidget, new RemoteViews(context.getPackageName(), R.layout.widget_layout));
     }
     private void updateAppWidget(Context context, WeatherResponse weatherResponse) {
@@ -197,22 +196,22 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
 
         CurrentWeather currentWeather = weatherResponse.getCurrentWeather();
         if (currentWeather != null) {
-            // Обновляем текстовое поле с температурой
+
             double temperature = currentWeather.getTemperatureCelsius();
             views.setTextViewText(R.id.forecastTemperatureTextView, "Temperature: " + temperature + "°C");
 
-            // Обновляем текстовое поле с названием города
-            String cityName = currentWeather.getCityName();
-            views.setTextViewText(R.id.forecastCityTextView, "City: " + cityName); // Обновляем текстовое поле с названием города
 
-            // Получаем текущую дату и обновляем текстовое поле с датой
+            String cityName = currentWeather.getCityName();
+            views.setTextViewText(R.id.forecastCityTextView, "City: " + cityName);
+
+
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
             String currentDate = dateFormat.format(new Date());
             views.setTextViewText(R.id.forecastDateTextView, "Date: " + currentDate);
 
             String iconUrl = "https:" + currentWeather.getWeatherCondition().getIconUrl();
             loadWeatherIcon(context, iconUrl, views);
-            // Обновляем виджет
+
             ComponentName thisWidget = new ComponentName(context, WeatherWidgetProvider.class);
             appWidgetManager.updateAppWidget(thisWidget, views);
         } else {
