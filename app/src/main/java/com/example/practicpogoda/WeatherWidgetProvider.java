@@ -8,12 +8,17 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.widget.RemoteViews;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import android.os.Handler;
+import android.graphics.Bitmap;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -65,6 +70,30 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
         ComponentName thisWidget = new ComponentName(context, WeatherWidgetProvider.class);
         appWidgetManager.updateAppWidget(thisWidget, views);
 
+    }
+    private void loadWeatherIcon(Context context, String iconUrl, RemoteViews views) {
+
+        Target target = new Target() {
+            @Override
+            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                views.setImageViewBitmap(R.id.forecastWeatherIconImageView, bitmap);
+                ComponentName thisWidget = new ComponentName(context, WeatherWidgetProvider.class);
+                AppWidgetManager.getInstance(context).updateAppWidget(thisWidget, views);
+            }
+
+            @Override
+            public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+                Log.e("WeatherWidget", "Ошибка загрузки иконки погоды", e);
+            }
+
+            @Override
+            public void onPrepareLoad(Drawable placeHolderDrawable) {
+                // Можно обработать заглушку, если необходимо
+            }
+        };
+
+        // Загрузка изображения с помощью Picasso
+        Picasso.get().load(iconUrl).into(target);
     }
 
     @Override
@@ -129,6 +158,7 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
                     CurrentWeather currentWeather = weatherResponse.getCurrentWeather();
                     if (currentWeather != null) {
                         currentWeather.setCityName(cityName); // Устанавливаем значение cityName в объекте CurrentWeather
+
                         updateAppWidget(context, weatherResponse);
                     } else {
                         Log.e("WeatherAPI", "Current weather data is null");
@@ -180,6 +210,8 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
             String currentDate = dateFormat.format(new Date());
             views.setTextViewText(R.id.forecastDateTextView, "Date: " + currentDate);
 
+            String iconUrl = "https:" + currentWeather.getWeatherCondition().getIconUrl();
+            loadWeatherIcon(context, iconUrl, views);
             // Обновляем виджет
             ComponentName thisWidget = new ComponentName(context, WeatherWidgetProvider.class);
             appWidgetManager.updateAppWidget(thisWidget, views);
