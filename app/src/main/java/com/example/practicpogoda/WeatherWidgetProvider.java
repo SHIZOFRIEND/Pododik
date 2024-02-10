@@ -27,7 +27,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class WeatherWidgetProvider extends AppWidgetProvider {
     private static final String BASE_URL = "https://api.weatherapi.com/v1/";
-    private static final String API_KEY = "e238b3fbb5734f208e7151055240302";
+    private static final String API_KEY = "020181d1b1c44cca88051726241002";
     private static final int UPDATE_INTERVAL = 10 * 1000;
     private Handler handler = new Handler();
     private Context context;
