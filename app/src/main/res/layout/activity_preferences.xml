@@ -102,7 +102,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="16dp"
-        android:text="Выбор темы"
+        android:text="Выбор языка"
         android:textColor="#000000"
         android:textSize="16sp" />
 
@@ -118,14 +118,14 @@
             android:id="@+id/lightThemeRadioButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Светлая тема"
+            android:text="Русский язык"
             android:textColor="#000000" />
 
         <RadioButton
             android:id="@+id/darkThemeRadioButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Темная тема"
+            android:text="Английский язык"
             android:textColor="#000000" />
     </RadioGroup>
 
