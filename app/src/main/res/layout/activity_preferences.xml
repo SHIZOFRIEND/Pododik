@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="16dp"
-        android:text="Настройки приложения"
+        android:text="Application Settings"
         android:textAlignment="center"
         android:textColor="#000000"
         android:textSize="20sp"
@@ -22,7 +22,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="16dp"
-        android:text="Уведомления"
+        android:text="Notifications"
+
         android:textColor="#000000"
         android:textColorHint="#000000" />
 
@@ -30,7 +31,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="16dp"
-        android:text="Единици измерения скорости ветра"
+        android:text="Wind speed units"
+        android:textAlignment="center"
         android:textColor="#000000"
         android:textSize="16sp" />
 
@@ -47,7 +49,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:checked="true"
-            android:text="Км/ч"
+            android:text="Kilometers per hour"
             android:textColor="#000000"
             android:textColorHighlight="#B60D0D"
             android:textColorHint="#000000"
@@ -57,7 +59,7 @@
             android:id="@+id/msRadioButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Миля/ч"
+            android:text="Miles per hour"
             android:textColor="#000000" />
     </RadioGroup>
 
@@ -65,7 +67,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="16dp"
-        android:text="Единицы измерения"
+        android:text="Degree units"
+        android:textAlignment="center"
         android:textColor="#000000"
         android:textSize="16sp" />
 
@@ -82,7 +85,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:checked="true"
-            android:text="Градусы Цельсия"
+            android:text="Degrees Celsius"
             android:textColor="#000000"
             android:textColorHighlight="#B60D0D"
             android:textColorLink="#F44336" />
@@ -91,44 +94,9 @@
             android:id="@+id/fahrenheitRadioButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Градусы Фаренгейта"
+            android:text="Degrees Fahrenheit"
             android:textColor="#000000" />
     </RadioGroup>
-
-
-
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:text="Выбор языка"
-        android:textColor="#000000"
-        android:textSize="16sp" />
-
-    <RadioGroup
-        android:id="@+id/themeRadioGroup"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp">
-
-        <RadioButton
-            android:id="@+id/lightThemeRadioButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Русский язык"
-            android:textColor="#000000" />
-
-        <RadioButton
-            android:id="@+id/darkThemeRadioButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Английский язык"
-            android:textColor="#000000" />
-    </RadioGroup>
-
 
     <Button
         android:id="@+id/saveSettingsButton"
@@ -136,7 +104,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:backgroundTint="#CFF2A6"
-        android:text="Сохранить настройки"
+        android:text="Save settings"
         android:textColor="#000000" />
 
     <Button
@@ -145,7 +113,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:backgroundTint="#CFF2A6"
-        android:text="О разработчике"
+        android:text="About the developer"
         android:textColor="#000000" />
 
 </LinearLayout>

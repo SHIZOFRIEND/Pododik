@@ -94,7 +94,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="16dp"
-        android:text="Прогноз погоды на одну неделю"
+        android:text="One week weather forecast"
         android:textAlignment="center"
         android:textColor="#4B6E23"
         android:textSize="20sp" />
@@ -115,7 +115,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="16dp"
-        android:text="Прогноз погоды на две недели"
+        android:text="Weather forecast for two weeks"
         android:textColor="#4B6E23"
         android:textSize="20sp" />
 

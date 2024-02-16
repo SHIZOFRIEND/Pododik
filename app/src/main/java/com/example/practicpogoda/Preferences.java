@@ -2,6 +2,7 @@ package com.example.practicpogoda;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -81,9 +82,9 @@ public class Preferences extends AppCompatActivity {
     }
 
     private void saveSettings() {
-
-
-        Toast.makeText(this, "Настройки сохранены", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Settings have been saved", Toast.LENGTH_SHORT).show();
+        startActivity(new Intent(this, MainActivity.class));
+        finish();
     }
 
     }

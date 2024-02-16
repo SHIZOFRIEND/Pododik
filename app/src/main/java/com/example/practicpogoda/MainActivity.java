@@ -193,7 +193,7 @@ public class MainActivity extends AppCompatActivity {
                                 double longitude = location.getLongitude();
 
 
-                                Geocoder geocoder = new Geocoder(MainActivity.this, Locale.getDefault());
+                                Geocoder geocoder = new Geocoder(MainActivity.this, Locale.ENGLISH);
                                 try {
                                     List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
                                     if (!addresses.isEmpty()) {
@@ -308,7 +308,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     private void updateWidgetCity(String cityName) {
-        // Обновляем город в SharedPreferences
+
         SharedPreferences preferences = getSharedPreferences("MyPreferences", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString("cityName", cityName);
