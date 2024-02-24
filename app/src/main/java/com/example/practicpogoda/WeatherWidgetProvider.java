@@ -16,6 +16,8 @@ import java.util.Date;
 import java.util.Locale;
 import android.os.Handler;
 import android.graphics.Bitmap;
+import android.widget.Toast;
+
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -27,29 +29,30 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class WeatherWidgetProvider extends AppWidgetProvider {
     private static final String BASE_URL = "https://api.weatherapi.com/v1/";
-    private static final String API_KEY = "020181d1b1c44cca88051726241002";
-    private static final int UPDATE_INTERVAL = 10 * 1000;
+    private static final String API_KEY = "21d4ec3dea1b4331b2e162049242402";
+    private static final int UPDATE_INTERVAL = 30 * 1000;
     private Handler handler = new Handler();
     private Context context;
     @Override
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
         if (intent.getAction().equals("com.example.practicpogoda.APP_CLOSED")) {
-
             disableAndEnableWidget(context);
+
+            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+            ComponentName thisWidget = new ComponentName(context, WeatherWidgetProvider.class);
+            int[] appWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget);
+            onUpdate(context, appWidgetManager, appWidgetIds);
+        }
+        if (intent.getAction().equals("com.example.practicpogoda.ACTION_WIDGET_CLICKED")) {
+            fetchWeatherData(context);
+            Toast.makeText(context, "Widget updating...", Toast.LENGTH_SHORT).show();
         }
         if (intent.getAction().equals(MainActivity.ACTION_UPDATE_WIDGET)) {
             String cityName = intent.getStringExtra("cityName");
             if (cityName != null) {
                 updateWidgetCity(context, cityName);
             }
-        }
-        if (intent.getAction().equals("com.example.practicpogoda.APP_CLOSED")) {
-
-            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-            ComponentName thisWidget = new ComponentName(context, WeatherWidgetProvider.class);
-            int[] appWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget);
-            onUpdate(context, appWidgetManager, appWidgetIds);
         }
 
         if (intent.getAction().equals("com.example.practicpogoda.APP_STARTED")) {
@@ -104,36 +107,28 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
 
         Intent intent = new Intent(context, WeatherWidgetProvider.class);
         intent.setAction("com.example.practicpogoda.ACTION_WIDGET_CLICKED");
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        alarmManager.setRepeating(AlarmManager.RTC, System.currentTimeMillis(), 10 * 1000, pendingIntent);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
 
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        alarmManager.setRepeating(AlarmManager.RTC, System.currentTimeMillis(), UPDATE_INTERVAL, pendingIntent);
 
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
         views.setOnClickPendingIntent(R.id.forecastTemperatureTextView, pendingIntent);
-
         views.setOnClickPendingIntent(R.id.forecastCityTextView, pendingIntent);
         views.setOnClickPendingIntent(R.id.forecastDateTextView, pendingIntent);
         views.setOnClickPendingIntent(R.id.forecastWeatherIconImageView, pendingIntent);
 
-
         ComponentName thisWidget = new ComponentName(context, WeatherWidgetProvider.class);
         appWidgetManager.updateAppWidget(thisWidget, views);
-        handler.postDelayed(updateWeatherRunnable, 10 * 1000);
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                fetchWeatherData(context);
-                handler.postDelayed(this, 10 * 1000);
-            }
-        }, 10 * 1000);
+        handler.postDelayed(updateWeatherRunnable, UPDATE_INTERVAL);
+
     }
 
     private Runnable updateWeatherRunnable = new Runnable() {
         @Override
         public void run() {
             fetchWeatherData(context);
-            handler.postDelayed(this, 10 * 1000);
+            handler.postDelayed(this, UPDATE_INTERVAL);
         }
     };
 
@@ -155,6 +150,7 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
                 if (response.isSuccessful()) {
                     WeatherResponse weatherResponse = response.body();
                     CurrentWeather currentWeather = weatherResponse.getCurrentWeather();
+                    Toast.makeText(context, "Widget updated successfully", Toast.LENGTH_SHORT).show();
                     if (currentWeather != null) {
                         currentWeather.setCityName(cityName);
 
@@ -196,12 +192,10 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
 
         CurrentWeather currentWeather = weatherResponse.getCurrentWeather();
         if (currentWeather != null) {
-
             double temperature = currentWeather.getTemperatureCelsius();
-            views.setTextViewText(R.id.forecastTemperatureTextView, "Temperature: " + temperature + "°C");
-
-
             String cityName = currentWeather.getCityName();
+
+            views.setTextViewText(R.id.forecastTemperatureTextView, "Temperature: " + temperature + "°C");
             views.setTextViewText(R.id.forecastCityTextView, "City: " + cityName);
 
 
