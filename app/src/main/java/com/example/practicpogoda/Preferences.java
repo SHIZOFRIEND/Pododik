@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.RadioButton;
@@ -32,6 +33,29 @@ public class Preferences extends AppCompatActivity {
         saveSettingsButton = findViewById(R.id.saveSettingsButton);
         msRadioButton = findViewById(R.id.msRadioButton);
         kmhRadioButton = findViewById(R.id. kmhRadioButton);
+        Button developerinf = findViewById(R.id.developerinf);
+        developerinf.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Preferences.this, Developer.class);
+                startActivity(intent);
+            }
+        });
+        Button backButton = findViewById(R.id.back);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+        Button supportButton = findViewById(R.id.dev);
+        supportButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Preferences.this, SupportActivity.class);
+                startActivity(intent);
+            }
+        });
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         String windSpeedUnit = sharedPreferences.getString("wind_speed_unit", "kmh");

@@ -13,10 +13,11 @@
     <EditText
         android:id="@+id/cityNameEditText"
         android:layout_width="229dp"
-        android:background="@drawable/edit_text_background"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
 
+        android:layout_gravity="center"
+        android:background="@drawable/edit_text_background"
         android:textAlignment="center"
         android:textColor="#4B6E23"
         android:textSize="24sp"

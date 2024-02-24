@@ -327,6 +327,7 @@ public class MainActivity extends AppCompatActivity {
         sendBroadcast(intent);
     }
 
+
     private void fetchWeatherForecast7Days(String cityName) {
         Call<WeatherForecastResponse> call = service.getWeatherForecast7Days(API_KEY, cityName, 7);
         call.enqueue(new Callback<WeatherForecastResponse>() {
