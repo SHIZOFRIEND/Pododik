@@ -136,7 +136,6 @@
         android:layout_marginTop="16dp"
 
         android:gravity="center"
-
         android:orientation="horizontal">
 
 
@@ -162,7 +161,6 @@
             android:gravity="center"
             android:scaleType="fitCenter"
             android:src="@drawable/settings_icon" />
-
 
 
         <ImageButton

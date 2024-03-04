@@ -2,7 +2,14 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.PracticPogoda" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+
+        <item name="android:windowContentOverlay"> @null
+
+        </item>
+        <item name="android:statusBarColor"> @color/title
+        </item>
+        <item name="android:navigationBarColor"> @color/title
+        </item>
     </style>
 
     <style name="Theme.PracticPogoda" parent="Base.Theme.PracticPogoda" />
