@@ -1,5 +1,4 @@
 package com.example.practicpogoda;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
@@ -50,16 +49,12 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-
 public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_NOTIFICATION_PERMISSION = 123;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1001;
     public static final String ACTION_UPDATE_WIDGET = "com.example.practicpogoda.ACTION_UPDATE_WIDGET";
-
     private static final String PREF_LAST_CITY = "last_city";
-
     private static final String CHANNEL_ID = "weather_notifications";
-
     private static final String BASE_URL = "https://api.weatherapi.com/v1/";
     private static final String API_KEY = "337189c33e81411e949110149241103";
     private String CITY_NAME = "";
@@ -69,7 +64,6 @@ public class MainActivity extends AppCompatActivity {
     private ForecastAdapter forecastAdapter14Days;
     private AppSettings appSettings;
     private SharedPreferences sharedPreferences;
-
     private TextView temperatureTextView;
     private TextView weatherConditionTextView;
     private TextView humidityTextView;
@@ -79,20 +73,16 @@ public class MainActivity extends AppCompatActivity {
     private boolean isLocationFetched = false;
     private Retrofit retrofit;
     private WeatherApiService service;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         appSettings = new AppSettings(this);
-
         retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
-
         service = retrofit.create(WeatherApiService.class);
-
         cityNameEditText = findViewById(R.id.cityNameEditText);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         temperatureTextView = findViewById(R.id.temperatureTextView);
@@ -102,7 +92,6 @@ public class MainActivity extends AppCompatActivity {
         weatherIconImageView = findViewById(R.id.weatherIconImageView);
         recyclerView7Days = findViewById(R.id.forecastRecyclerView7Days);
         recyclerView14Days = findViewById(R.id.forecastRecyclerView14Days);
-
         forecastAdapter7Days = new ForecastAdapter(new ArrayList<>());
         recyclerView7Days.setAdapter(forecastAdapter7Days);
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -112,7 +101,6 @@ public class MainActivity extends AppCompatActivity {
         RecyclerView recyclerView7Days = findViewById(R.id.forecastRecyclerView7Days);
         LinearLayoutManager layoutManager7Days = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         recyclerView7Days.setLayoutManager(layoutManager7Days);
-
         ImageButton PreferenseButton = findViewById(R.id.PreferenseButton);
         PreferenseButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -147,16 +135,12 @@ public class MainActivity extends AppCompatActivity {
                 openWeatherMap();
             }
         });
-
         fetchDefaultCityByLocation();
-
         cityNameEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {}
-
             @Override
             public void afterTextChanged(Editable s) {
                 String newCityName = s.toString().trim();
@@ -173,16 +157,12 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
-
     }
-
     private void fetchDefaultCityByLocation() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
         } else {
-
             FusedLocationProviderClient fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
             fusedLocationClient.getLastLocation()
                     .addOnSuccessListener(this, new OnSuccessListener<Location>() {
@@ -191,8 +171,6 @@ public class MainActivity extends AppCompatActivity {
                             if (location != null) {
                                 double latitude = location.getLatitude();
                                 double longitude = location.getLongitude();
-
-
                                 Geocoder geocoder = new Geocoder(MainActivity.this, Locale.ENGLISH);
                                 try {
                                     List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
@@ -205,7 +183,6 @@ public class MainActivity extends AppCompatActivity {
                                         fetchWeatherForecast14Days(CITY_NAME);
                                     } else {
                                         Log.e("Location", "No address found for the location");
-
                                     }
                                 } catch (IOException e) {
                                     Log.e("Location", "Error getting city name from location", e);
@@ -217,11 +194,9 @@ public class MainActivity extends AppCompatActivity {
                     });
         }
     }
-
     private void updateCityNameEditText(String cityName) {
         cityNameEditText.setText(cityName);
     }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -236,7 +211,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -261,7 +235,6 @@ public class MainActivity extends AppCompatActivity {
                     Log.e("WeatherAPI", "Failed to get weather data");
                 }
             }
-
             @Override
             public void onFailure(Call<WeatherResponse> call, Throwable t) {
                 Log.e("WeatherAPI", "Error fetching weather data", t);
@@ -271,35 +244,26 @@ public class MainActivity extends AppCompatActivity {
     private void showWeatherNotification(WeatherResponse weatherResponse) {
         String temperature = String.valueOf(weatherResponse.getCurrentWeather().getTemperatureCelsius());
         String condition = weatherResponse.getCurrentWeather().getWeatherCondition().getConditionText();
-
-
         boolean isNotificationEnabled = appSettings.isNotificationEnabled();
-
         if (!isNotificationEnabled) {
-
             NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
             notificationManager.cancelAll();
             return;
         }
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence name = getString(R.string.channel_name);
             String description = getString(R.string.channel_description);
             int importance = NotificationManager.IMPORTANCE_DEFAULT;
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
             channel.setDescription(description);
-
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
         }
-
-
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.weather_icon)
                 .setContentTitle("Current Weather")
                 .setContentText("Temperature: " + temperature + "°C, Condition: " + condition)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-
         try {
             NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
             notificationManager.notify(1, builder.build());
@@ -308,26 +272,20 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     private void updateWidgetCity(String cityName) {
-
         SharedPreferences preferences = getSharedPreferences("MyPreferences", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString("cityName", cityName);
         editor.apply();
-
         Intent updateWidgetIntent = new Intent(ACTION_UPDATE_WIDGET);
         updateWidgetIntent.putExtra("cityName", cityName);
         sendBroadcast(updateWidgetIntent);
     }
-
     @Override
     protected void onStart() {
         super.onStart();
-
         Intent intent = new Intent("com.example.practicpogoda.APP_STARTED");
         sendBroadcast(intent);
     }
-
-
     private void fetchWeatherForecast7Days(String cityName) {
         Call<WeatherForecastResponse> call = service.getWeatherForecast7Days(API_KEY, cityName, 7);
         call.enqueue(new Callback<WeatherForecastResponse>() {
@@ -335,22 +293,18 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(Call<WeatherForecastResponse> call, Response<WeatherForecastResponse> response) {
                 if (response.isSuccessful()) {
                     WeatherForecastResponse weatherResponse = response.body();
-
                     List<WeatherForecastResponse.ForecastDay> forecastDays = weatherResponse.getForecast().getForecastDays();
-
                     forecastAdapter7Days.updateForecastData(forecastDays);
                 } else {
                     Log.e("WeatherAPI", "Failed to get weather forecast for 7 days");
                 }
             }
-
             @Override
             public void onFailure(Call<WeatherForecastResponse> call, Throwable t) {
                 Log.e("WeatherAPI", "Error fetching weather forecast for 7 days", t);
             }
         });
     }
-
     private void fetchWeatherForecast14Days(String cityName) {
         Call<WeatherForecastResponse> call = service.getWeatherForecast14Days(API_KEY, cityName, 14);
         call.enqueue(new Callback<WeatherForecastResponse>() {
@@ -366,15 +320,12 @@ public class MainActivity extends AppCompatActivity {
                     Log.e("WeatherAPI", "Failed to get weather forecast for 14 days");
                 }
             }
-
             @Override
             public void onFailure(Call<WeatherForecastResponse> call, Throwable t) {
                 Log.e("WeatherAPI", "Error fetching weather forecast for 14 days", t);
             }
         });
     }
-
-
     private void openWeatherMap() {
         String url = "https://yandex.ru/pogoda/maps/nowcast";
         Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -387,12 +338,10 @@ public class MainActivity extends AppCompatActivity {
         intent.setData(Uri.parse(url));
         startActivity(intent);
     }
-
     private void updateUI(WeatherResponse weatherResponse,SharedPreferences sharedPreferences) {
         CurrentWeather currentWeather = weatherResponse.getCurrentWeather();
         String temperatureUnit = sharedPreferences.getString("temperature_unit", "Celsius");
         String windSpeedUnit = sharedPreferences.getString("wind_speed_unit", "kmh");
-
         double temperatureValue;
         String temperatureStringFormat;
         if (temperatureUnit.equals("Celsius")) {
@@ -411,18 +360,11 @@ public class MainActivity extends AppCompatActivity {
             windSpeedValue = currentWeather.getWindSpeedMph();
             windSpeedStringFormat = getString(R.string.wind_speed_mph);
         }
-
         windSpeedTextView.setText(String.format(Locale.getDefault(), windSpeedStringFormat, windSpeedValue));
         temperatureTextView.setText(String.format(Locale.getDefault(), temperatureStringFormat, temperatureValue));
-
         weatherConditionTextView.setText(getString(R.string.weather_condition, currentWeather.getWeatherCondition().getConditionText()));
         humidityTextView.setText(getString(R.string.humidity, currentWeather.getHumidity()));
-
-
-
         Log.d("WeatherIcon", "Icon URL: " + currentWeather.getWeatherCondition().getIconUrl());
-
         Picasso.get().load("https:" + currentWeather.getWeatherCondition().getIconUrl()).into(weatherIconImageView);
-
     }
 }

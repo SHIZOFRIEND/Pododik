@@ -1,5 +1,4 @@
 package com.example.practicpogoda;
-
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -12,7 +11,6 @@ import android.widget.CheckBox;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
-
 public class Preferences extends AppCompatActivity {
     private AppSettings appSettings;
     private CheckBox notificationSwitch;
@@ -22,8 +20,6 @@ public class Preferences extends AppCompatActivity {
     private RadioButton kmhRadioButton;
     private Button saveSettingsButton;
     private SharedPreferences sharedPreferences;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,7 +53,6 @@ public class Preferences extends AppCompatActivity {
             }
         });
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-
         String windSpeedUnit = sharedPreferences.getString("wind_speed_unit", "kmh");
         if (windSpeedUnit.equals("kmh")) {
             kmhRadioButton.setChecked(true);
@@ -76,7 +71,6 @@ public class Preferences extends AppCompatActivity {
             }
             editor.apply();
         });
-
         RadioGroup temperatureUnitRadioGroup = findViewById(R.id.temperatureUnitRadioGroup);
         temperatureUnitRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
             SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -87,8 +81,6 @@ public class Preferences extends AppCompatActivity {
             }
             editor.apply();
         });
-
-
         String temperatureUnit = sharedPreferences.getString("temperature_unit", "Celsius");
         if (temperatureUnit.equals("Celsius")) {
             celsiusRadioButton.setChecked(true);
@@ -99,17 +91,12 @@ public class Preferences extends AppCompatActivity {
 
         notificationSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             appSettings.setNotificationEnabled(isChecked);
-
         });
-
         saveSettingsButton.setOnClickListener(v -> saveSettings());
     }
-
     private void saveSettings() {
         Toast.makeText(this, "Settings have been saved", Toast.LENGTH_SHORT).show();
         startActivity(new Intent(this, MainActivity.class));
         finish();
     }
-
     }
-
