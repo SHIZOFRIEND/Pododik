@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String PREF_LAST_CITY = "last_city";
     private static final String CHANNEL_ID = "weather_notifications";
     private static final String BASE_URL = "https://api.weatherapi.com/v1/";
-    private static final String API_KEY = "337189c33e81411e949110149241103";
+    private static final String API_KEY = "2f97444fadd04e13992154031242703";
     private String CITY_NAME = "";
     private RecyclerView recyclerView7Days;
     private RecyclerView recyclerView14Days;
