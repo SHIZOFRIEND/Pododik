@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">PracticPogoda</string>
+    <string name="app_name">WeatherForecast</string>
     <string name="temperature">Temperature: %.1f°C</string>
     <string name="temperature_fahrenheit">Temperature: %.1f°F</string>
     <string name="temperature_celsius">Celsius</string>
