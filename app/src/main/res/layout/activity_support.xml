@@ -44,7 +44,9 @@
         android:id="@+id/messageEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/edit_text_background"
         android:hint="Enter your message here"
+        android:textAlignment="center"
         android:textColor="#000000"
         android:textColorHint="#000000" />
 
